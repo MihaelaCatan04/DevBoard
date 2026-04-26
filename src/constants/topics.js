@@ -11,7 +11,7 @@ export const LANGUAGES = [
   { id: "swift", label: "Swift", color: "#F05138" },
   { id: "kotlin", label: "Kotlin", color: "#A97BFF" },
   { id: "php", label: "PHP", color: "#4F5D95" },
-]
+];
 
 export const TOPICS = [
   { id: "frontend", label: "Frontend" },
@@ -24,7 +24,7 @@ export const TOPICS = [
   { id: "databases", label: "Databases" },
   { id: "cloud", label: "Cloud" },
   { id: "opensource", label: "Open Source" },
-]
+];
 
 export const TIMEZONES = [
   { id: "utc", label: "UTC", tz: "UTC" },
@@ -37,7 +37,7 @@ export const TIMEZONES = [
   { id: "singapore", label: "Singapore", tz: "Asia/Singapore" },
   { id: "sydney", label: "Sydney", tz: "Australia/Sydney" },
   { id: "san_francisco", label: "San Francisco", tz: "America/Los_Angeles" },
-]
+];
 
 export const DEFAULT_PROFILE = {
   languages: ["javascript", "typescript"],
@@ -45,7 +45,7 @@ export const DEFAULT_PROFILE = {
   packages: ["react", "vite", "tailwindcss"],
   clocks: ["utc", "london", "new_york"],
   bookmarks: [],
-}
+};
 export const TOPIC_KEYWORDS = {
   frontend: ["react", "vue", "angular", "css", "javascript", "typescript"],
   backend: ["node", "api", "server", "database", "backend", "express"],
@@ -58,3 +58,12 @@ export const TOPIC_KEYWORDS = {
   cloud: ["aws", "gcp", "azure", "cloud"],
   opensource: ["open source", "github", "oss"],
 };
+
+export const TABS = [
+  { id: "github", label: "GitHub" },
+  { id: "hackernews", label: "Hacker News" },
+  { id: "npm", label: "npm" },
+  { id: "devto", label: "DEV.to" },
+  { id: "clocks", label: "Clocks" },
+  { id: "bookmarks", label: "Bookmarks" },
+];

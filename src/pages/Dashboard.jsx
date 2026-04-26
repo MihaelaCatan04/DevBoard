@@ -5,14 +5,8 @@ import HackerNewsPanel from "../components/panels/HackerNewsPanel";
 import NpmPanel from "../components/panels/NpmPanel";
 import DevToPanel from "../components/panels/DevToPanel";
 import ClocksPanel from "../components/panels/ClocksPanel";
-
-const TABS = [
-  { id: "github", label: "GitHub" },
-  { id: "hackernews", label: "Hacker News" },
-  { id: "npm", label: "npm" },
-  { id: "devto", label: "DEV.to" },
-  { id: "clocks", label: "Clocks" },
-];
+import BookmarksPanel from "../components/panels/BookmarksPanel";
+import { TABS } from "../constants/topics";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("github");
@@ -48,6 +42,7 @@ export default function Dashboard() {
         {activeTab === "npm" && <NpmPanel />}
         {activeTab === "devto" && <DevToPanel />}
         {activeTab === "clocks" && <ClocksPanel />}
+        {activeTab === "bookmarks" && <BookmarksPanel />}
       </main>
     </div>
   );
