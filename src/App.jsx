@@ -1,11 +1,13 @@
-function App() {
-  return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-white">
-        DevBoard is alive 🚀
-      </h1>
-    </div>
-  )
-}
+import { useProfileContext } from './context/ProfileContext'
+import Onboarding from './pages/Onboarding'
+import Dashboard from './pages/Dashboard'
 
-export default App
+export default function App() {
+  const { hasCompletedOnboarding } = useProfileContext()
+
+  if (!hasCompletedOnboarding) {
+    return <Onboarding />
+  }
+
+  return <Dashboard />
+}
