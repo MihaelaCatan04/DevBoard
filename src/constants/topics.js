@@ -46,3 +46,15 @@ export const DEFAULT_PROFILE = {
   clocks: ["utc", "london", "new_york"],
   bookmarks: [],
 }
+export const TOPIC_KEYWORDS = {
+  frontend: ["react", "vue", "angular", "css", "javascript", "typescript"],
+  backend: ["node", "api", "server", "database", "backend", "express"],
+  devops: ["docker", "kubernetes", "aws", "deployment", "devops"],
+  ml: ["ai", "machine learning", "llm", "openai", "neural", "python"],
+  systems: ["rust", "c++", "linux", "kernel", "compiler"],
+  mobile: ["ios", "android", "swift", "kotlin", "react native"],
+  security: ["security", "hack", "encryption", "auth"],
+  databases: ["postgres", "mysql", "mongodb", "redis", "database"],
+  cloud: ["aws", "gcp", "azure", "cloud"],
+  opensource: ["open source", "github", "oss"],
+};

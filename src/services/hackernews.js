@@ -1,35 +1,55 @@
 // Docs: https://github.com/HackerNews/API
+import { TOPIC_KEYWORDS } from "../constants/topics";
 
-const BASE_URL = 'https://hacker-news.firebaseio.com/v0'
+const BASE_URL = "https://hacker-news.firebaseio.com/v0";
 
 export async function fetchHNStories(topics = [], limit = 10) {
-  const idsResponse = await fetch(`${BASE_URL}/topstories.json`)
-  if (!idsResponse.ok) throw new Error('Could not fetch HN stories')
+  const idsResponse = await fetch(`${BASE_URL}/topstories.json`);
 
-  const allIds = await idsResponse.json()
+  if (!idsResponse.ok) {
+    throw new Error("Could not fetch HN stories");
+  }
 
-  const topIds = allIds.slice(0, 30)
+  const allIds = await idsResponse.json();
+
+  const topIds = allIds.slice(0, 50);
 
   const stories = await Promise.all(
-    topIds.map(id =>
-      fetch(`${BASE_URL}/item/${id}.json`).then(r => r.json())
-    )
-  )
+    topIds.map((id) =>
+      fetch(`${BASE_URL}/item/${id}.json`).then((r) => r.json()),
+    ),
+  );
 
-  const filtered = topics.length > 0
-    ? stories.filter(story => {
-        if (!story?.title) return false
-        const titleLower = story.title.toLowerCase()
-        return topics.some(topic => titleLower.includes(topic.toLowerCase()))
-      })
-    : stories.filter(s => s?.title)
+  const validStories = stories.filter(
+    (story) => story?.title && story?.type === "story",
+  );
 
-  return filtered.slice(0, limit).map(story => ({
+  let filtered = validStories;
+
+  if (topics.length > 0) {
+    const keywords = topics.flatMap(
+      (topic) => TOPIC_KEYWORDS[topic] || [topic],
+    );
+
+    filtered = validStories.filter((story) => {
+      const titleLower = story.title.toLowerCase();
+
+      return keywords.some((keyword) =>
+        titleLower.includes(keyword.toLowerCase()),
+      );
+    });
+  }
+
+  if (filtered.length === 0) {
+    filtered = validStories.slice(0, limit);
+  }
+
+  return filtered.slice(0, limit).map((story) => ({
     id: story.id,
     title: story.title,
-    url: story.url ?? `https://news.ycombinator.com/item?id=${story.id}`,
-    score: story.score,
-    comments: story.descendants ?? 0,
-    by: story.by,
-  }))
+    url: story.url || `https://news.ycombinator.com/item?id=${story.id}`,
+    score: story.score || 0,
+    comments: story.descendants || 0,
+    by: story.by || "unknown",
+  }));
 }
