@@ -4,16 +4,11 @@ import { TIMEZONES } from "../../constants/topics";
 
 export default function ClocksPanel() {
   const { profile, addClock, removeClock } = useProfileContext();
-
   const [now, setNow] = useState(new Date());
-
   const [selected, setSelected] = useState("");
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(new Date());
-    }, 1000);
-
+    const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -23,7 +18,7 @@ export default function ClocksPanel() {
     setSelected("");
   }
 
-  const activClocks = profile.clocks
+  const activeClocks = profile.clocks
     .map((id) => TIMEZONES.find((tz) => tz.id === id))
     .filter(Boolean);
 
@@ -33,12 +28,11 @@ export default function ClocksPanel() {
 
   return (
     <div>
-      {/* Add clock */}
       <div className="mb-6">
-        <label className="block text-sm text-gray-400 mb-2">
+        <label className="block text-sm text-gray-600 dark:text-gray-400 mb-2">
           Add a colleague's timezone
         </label>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <select
             value={selected}
             onChange={(e) => setSelected(e.target.value)}
@@ -54,20 +48,19 @@ export default function ClocksPanel() {
           <button
             onClick={handleAdd}
             disabled={!selected}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed rounded-lg text-sm font-medium text-white transition-colors"
           >
             Add
           </button>
         </div>
       </div>
 
-      {/* Clock cards */}
-      {activClocks.length === 0 && (
+      {activeClocks.length === 0 && (
         <p className="text-gray-500 text-center py-12">No clocks added yet.</p>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {activClocks.map((tz) => (
+        {activeClocks.map((tz) => (
           <ClockCard
             key={tz.id}
             timezone={tz}
@@ -102,17 +95,17 @@ function ClockCard({ timezone, now, onRemove }) {
   const isEvening = hour >= 18 && hour < 21;
 
   function getTimeColor() {
-    if (isNight) return "text-blue-400";
-    if (isDawn) return "text-orange-400";
-    if (isEvening) return "text-purple-400";
-    return "text-green-400";
+    if (isNight) return "text-blue-500 dark:text-blue-400";
+    if (isDawn) return "text-orange-500 dark:text-orange-400";
+    if (isEvening) return "text-purple-500 dark:text-purple-400";
+    return "text-green-500 dark:text-green-400";
   }
 
   function getTimeLabel() {
-    if (isNight) return "Night";
-    if (isDawn) return "Morning";
-    if (isEvening) return "Evening";
-    return "Day";
+    if (isNight) return "🌙 Night";
+    if (isDawn) return "🌅 Morning";
+    if (isEvening) return "🌆 Evening";
+    return "☀️ Day";
   }
 
   return (
@@ -126,7 +119,7 @@ function ClockCard({ timezone, now, onRemove }) {
         </div>
         <button
           onClick={onRemove}
-          className="text-gray-600 hover:text-red-400 transition-colors"
+          className="text-gray-400 hover:text-red-400 transition-colors"
         >
           ✕
         </button>

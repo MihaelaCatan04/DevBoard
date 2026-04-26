@@ -59,14 +59,14 @@ function RepoCard({ repo, isBookmarked, onBookmark }) {
             </p>
           )}
 
-          <div className="flex items-center gap-3 mt-3 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-2 mt-3 text-xs text-gray-500">
             {repo.language && (
               <span className="text-gray-700 dark:text-gray-300">
                 {repo.language}
               </span>
             )}
             <span>⭐ {repo.stars.toLocaleString()}</span>
-            {repo.topics.slice(0, 3).map((topic) => (
+            {repo.topics.slice(0, 2).map((topic) => (
               <span
                 key={topic}
                 className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-gray-600 dark:text-gray-400"
@@ -79,6 +79,7 @@ function RepoCard({ repo, isBookmarked, onBookmark }) {
 
         <button
           onClick={onBookmark}
+          title={isBookmarked ? "Remove bookmark" : "Bookmark this repo"}
           className={`text-lg flex-shrink-0 transition-colors ${
             isBookmarked
               ? "text-yellow-500"

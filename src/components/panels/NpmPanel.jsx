@@ -21,13 +21,11 @@ export default function NpmPanel() {
 
   function handleAdd() {
     const cleaned = input.trim().toLowerCase();
-
     if (!cleaned) return;
     if (profile.packages.includes(cleaned)) {
       setInputError("You are already tracking this package");
       return;
     }
-
     addPackage(cleaned);
     setInput("");
     setInputError(null);
@@ -39,12 +37,11 @@ export default function NpmPanel() {
 
   return (
     <div>
-      {/* Add package input */}
       <div className="mb-6">
-        <label className="block text-sm text-gray-400 mb-2">
+        <label className="block text-sm text-gray-600 dark:text-gray-400 mb-2">
           Track a package
         </label>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             value={input}
@@ -58,19 +55,16 @@ export default function NpmPanel() {
           />
           <button
             onClick={handleAdd}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
           >
             Add
           </button>
         </div>
-
-        {/* Inline validation error */}
         {inputError && (
           <p className="text-red-400 text-xs mt-1">{inputError}</p>
         )}
       </div>
 
-      {/* Package list */}
       {loading && <Spinner />}
       {error && <ErrorMessage message={error} />}
 
@@ -100,7 +94,7 @@ function PackageCard({ pkg, onRemove }) {
     <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <a
               href={pkg.url}
               target="_blank"
@@ -121,18 +115,17 @@ function PackageCard({ pkg, onRemove }) {
           )}
 
           <div className="mt-2 text-xs text-gray-500">
-            <span className="text-green-400 font-medium">
+            <span className="text-green-500 dark:text-green-400 font-medium">
               {pkg.weeklyDownloads.toLocaleString()}
             </span>{" "}
             downloads last week
           </div>
         </div>
 
-        {/* Remove button */}
         <button
           onClick={onRemove}
           title="Stop tracking"
-          className="text-gray-600 hover:text-red-400 transition-colors text-lg flex-shrink-0"
+          className="text-gray-400 hover:text-red-400 transition-colors text-lg flex-shrink-0"
         >
           ✕
         </button>

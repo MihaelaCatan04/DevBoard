@@ -62,7 +62,7 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
               {article.title}
             </a>
 
-            <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+            <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500">
               <span>by {article.author}</span>
               <span>{article.readingTime} min read</span>
               <span className="text-pink-500 dark:text-pink-400">

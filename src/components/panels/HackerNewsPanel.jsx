@@ -50,7 +50,7 @@ function StoryCard({ story, isBookmarked, onBookmark }) {
             {story.title}
           </a>
 
-          <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500">
             <span className="text-orange-500 dark:text-orange-400">
               ▲ {story.score}
             </span>

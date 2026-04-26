@@ -6,8 +6,8 @@ import NpmPanel from "../components/panels/NpmPanel";
 import DevToPanel from "../components/panels/DevToPanel";
 import ClocksPanel from "../components/panels/ClocksPanel";
 import BookmarksPanel from "../components/panels/BookmarksPanel";
-import { TABS } from "../constants/topics";
 import SettingsDrawer from "../components/layout/SettingsDrawer";
+import { TABS } from "../constants/topics";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("github");
@@ -22,14 +22,18 @@ export default function Dashboard() {
         onClose={() => setSettingsOpen(false)}
       />
 
-      <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-6">
-        <div className="max-w-7xl mx-auto flex gap-1 overflow-x-auto">
+      {/* Tab bar */}
+      <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-2 sm:px-6">
+        <div
+          className="max-w-7xl mx-auto flex overflow-x-auto"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors
+                px-3 sm:px-4 py-3 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors
                 ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600 dark:text-white"
@@ -43,7 +47,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      {/* Panel area */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {activeTab === "github" && <GithubPanel />}
         {activeTab === "hackernews" && <HackerNewsPanel />}
         {activeTab === "npm" && <NpmPanel />}
