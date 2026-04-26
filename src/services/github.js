@@ -20,7 +20,7 @@ export async function fetchGithubRepos(languages = [], page = 1) {
   const url = `${BASE_URL}?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=10&page=${page}`;
 
   console.log(query);
-  
+
   const response = await fetch(url);
 
   if (response.status === 403) {

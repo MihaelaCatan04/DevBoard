@@ -1,6 +1,6 @@
 import { useProfileContext } from "../../context/ProfileContext";
 
-export default function Navbar() {
+export default function Navbar({ onSettingsOpen }) {
   const { profile, isDark, toggleTheme } = useProfileContext();
 
   return (
@@ -24,6 +24,13 @@ export default function Navbar() {
             className="text-xl text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             {isDark ? "☀️" : "🌙"}
+          </button>
+          <button
+            onClick={onSettingsOpen}
+            title="Settings"
+            className="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors text-xl"
+          >
+            Settings
           </button>
         </div>
       </div>
