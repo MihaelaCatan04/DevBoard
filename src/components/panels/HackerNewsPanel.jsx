@@ -38,27 +38,29 @@ export default function HackerNewsPanel() {
 
 function StoryCard({ story, isBookmarked, onBookmark }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-colors">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <a
             href={story.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-white hover:text-blue-300 transition-colors"
+            className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
           >
             {story.title}
           </a>
 
           <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-            <span className="text-orange-400">▲ {story.score}</span>
+            <span className="text-orange-500 dark:text-orange-400">
+              ▲ {story.score}
+            </span>
             <span>{story.comments} comments</span>
             <span>by {story.by}</span>
             <a
               href={`https://news.ycombinator.com/item?id=${story.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-gray-300 transition-colors"
+              className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             >
               discuss
             </a>
@@ -69,8 +71,8 @@ function StoryCard({ story, isBookmarked, onBookmark }) {
           onClick={onBookmark}
           className={`text-lg flex-shrink-0 transition-colors ${
             isBookmarked
-              ? "text-yellow-400"
-              : "text-gray-600 hover:text-gray-300"
+              ? "text-yellow-500"
+              : "text-gray-300 dark:text-gray-600 hover:text-gray-500"
           }`}
         >
           {isBookmarked ? "★" : "☆"}

@@ -41,8 +41,7 @@ export default function DevToPanel() {
 
 function ArticleCard({ article, isBookmarked, onBookmark }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden hover:border-gray-600 transition-colors">
-      {/* Cover image — only shown if the article has one */}
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
       {article.cover && (
         <img
           src={article.cover}
@@ -58,26 +57,26 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-white hover:text-blue-300 transition-colors"
+              className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
             >
               {article.title}
             </a>
 
-            {/* Meta row */}
             <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
               <span>by {article.author}</span>
               <span>{article.readingTime} min read</span>
-              <span className="text-pink-400">♥ {article.reactions}</span>
+              <span className="text-pink-500 dark:text-pink-400">
+                ♥ {article.reactions}
+              </span>
               <span>{article.comments} comments</span>
             </div>
 
-            {/* Tags */}
             {article.tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {article.tags.slice(0, 4).map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded"
+                    className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded"
                   >
                     #{tag}
                   </span>
@@ -90,8 +89,8 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
             onClick={onBookmark}
             className={`text-lg flex-shrink-0 transition-colors ${
               isBookmarked
-                ? "text-yellow-400"
-                : "text-gray-600 hover:text-gray-300"
+                ? "text-yellow-500"
+                : "text-gray-300 dark:text-gray-600 hover:text-gray-500"
             }`}
           >
             {isBookmarked ? "★" : "☆"}

@@ -1,37 +1,38 @@
-import { useState, useEffect } from 'react'
-import { useProfileContext } from '../../context/ProfileContext'
-import { TIMEZONES } from '../../constants/topics'
+import { useState, useEffect } from "react";
+import { useProfileContext } from "../../context/ProfileContext";
+import { TIMEZONES } from "../../constants/topics";
 
 export default function ClocksPanel() {
-  const { profile, addClock, removeClock } = useProfileContext()
+  const { profile, addClock, removeClock } = useProfileContext();
 
-  const [now, setNow] = useState(new Date())
+  const [now, setNow] = useState(new Date());
 
-  const [selected, setSelected] = useState('')
+  const [selected, setSelected] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setNow(new Date())
-    }, 1000)
+      setNow(new Date());
+    }, 1000);
 
-    return () => clearInterval(interval)
-  }, []) 
+    return () => clearInterval(interval);
+  }, []);
 
   function handleAdd() {
-    if (!selected) return
-    addClock(selected)
-    setSelected('')
+    if (!selected) return;
+    addClock(selected);
+    setSelected("");
   }
 
   const activClocks = profile.clocks
-    .map(id => TIMEZONES.find(tz => tz.id === id))
-    .filter(Boolean) 
+    .map((id) => TIMEZONES.find((tz) => tz.id === id))
+    .filter(Boolean);
 
-  const availableToAdd = TIMEZONES.filter(tz => !profile.clocks.includes(tz.id))
+  const availableToAdd = TIMEZONES.filter(
+    (tz) => !profile.clocks.includes(tz.id),
+  );
 
   return (
     <div>
-
       {/* Add clock */}
       <div className="mb-6">
         <label className="block text-sm text-gray-400 mb-2">
@@ -40,11 +41,11 @@ export default function ClocksPanel() {
         <div className="flex gap-2">
           <select
             value={selected}
-            onChange={e => setSelected(e.target.value)}
-            className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500 transition-colors"
+            onChange={(e) => setSelected(e.target.value)}
+            className="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 transition-colors"
           >
             <option value="">Select a timezone...</option>
-            {availableToAdd.map(tz => (
+            {availableToAdd.map((tz) => (
               <option key={tz.id} value={tz.id}>
                 {tz.label}
               </option>
@@ -66,7 +67,7 @@ export default function ClocksPanel() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {activClocks.map(tz => (
+        {activClocks.map((tz) => (
           <ClockCard
             key={tz.id}
             timezone={tz}
@@ -75,51 +76,52 @@ export default function ClocksPanel() {
           />
         ))}
       </div>
-
     </div>
-  )
+  );
 }
 
 function ClockCard({ timezone, now, onRemove }) {
-  const timeString = new Intl.DateTimeFormat('en-GB', {
+  const timeString = new Intl.DateTimeFormat("en-GB", {
     timeZone: timezone.tz,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
     hour12: false,
-  }).format(now)
+  }).format(now);
 
-  const dateString = new Intl.DateTimeFormat('en-GB', {
+  const dateString = new Intl.DateTimeFormat("en-GB", {
     timeZone: timezone.tz,
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  }).format(now)
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(now);
 
-  const hour = parseInt(timeString.split(':')[0])
-  const isNight = hour < 7 || hour >= 21
-  const isDawn = hour >= 7 && hour < 12
-  const isEvening = hour >= 18 && hour < 21
+  const hour = parseInt(timeString.split(":")[0]);
+  const isNight = hour < 7 || hour >= 21;
+  const isDawn = hour >= 7 && hour < 12;
+  const isEvening = hour >= 18 && hour < 21;
 
   function getTimeColor() {
-    if (isNight) return 'text-blue-400'
-    if (isDawn) return 'text-orange-400'
-    if (isEvening) return 'text-purple-400'
-    return 'text-green-400'
+    if (isNight) return "text-blue-400";
+    if (isDawn) return "text-orange-400";
+    if (isEvening) return "text-purple-400";
+    return "text-green-400";
   }
 
   function getTimeLabel() {
-    if (isNight) return 'Night'
-    if (isDawn) return 'Morning'
-    if (isEvening) return 'Evening'
-    return 'Day'
+    if (isNight) return "Night";
+    if (isDawn) return "Morning";
+    if (isEvening) return "Evening";
+    return "Day";
   }
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-5 hover:border-gray-600 transition-colors">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-5 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="font-medium text-white">{timezone.label}</p>
+          <p className="font-medium text-gray-900 dark:text-white">
+            {timezone.label}
+          </p>
           <p className="text-xs text-gray-500 mt-0.5">{timezone.tz}</p>
         </div>
         <button
@@ -139,5 +141,5 @@ function ClockCard({ timezone, now, onRemove }) {
         <span className="text-xs text-gray-500">{getTimeLabel()}</span>
       </div>
     </div>
-  )
+  );
 }

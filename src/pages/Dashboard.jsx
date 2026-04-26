@@ -18,10 +18,10 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("github");
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white">
       <Navbar />
 
-      <div className="border-b border-gray-800 px-6">
+      <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-6">
         <div className="max-w-7xl mx-auto flex gap-1 overflow-x-auto">
           {TABS.map((tab) => (
             <button
@@ -31,8 +31,8 @@ export default function Dashboard() {
                 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors
                 ${
                   activeTab === tab.id
-                    ? "border-blue-500 text-white"
-                    : "border-transparent text-gray-400 hover:text-gray-200"
+                    ? "border-blue-500 text-blue-600 dark:text-white"
+                    : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                 }
               `}
             >
