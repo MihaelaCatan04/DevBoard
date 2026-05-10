@@ -1,20 +1,27 @@
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleBookmark } from "../../store/profileSlice";
 import { useFeed } from "../../hooks/useFeed";
-import { fetchGithubRepos } from "../../services/github";
+import { fetchGithubRepos, prefetchAllLanguages } from "../../services/github";
+import { LANGUAGES } from "../../constants/topics";
 import Spinner from "../ui/Spinner";
 import ErrorMessage from "../ui/ErrorMessage";
+
+const ALL_LANGUAGE_IDS = LANGUAGES.map((l) => l.id);
 
 export default function GithubPanel() {
   const languages = useSelector((state) => state.profile.data.languages);
   const bookmarks = useSelector((state) => state.profile.data.bookmarks);
   const dispatch = useDispatch();
 
-  const {
-    data: repos,
-    loading,
-    error,
-  } = useFeed(() => fetchGithubRepos(languages), [languages.join(",")]);
+  useEffect(() => {
+    prefetchAllLanguages(ALL_LANGUAGE_IDS);
+  }, []);
+
+  const { data: repos, loading, error } = useFeed(
+    () => fetchGithubRepos(languages),
+    [languages.join(",")]
+  );
 
   if (loading) return <Spinner />;
   if (error) return <ErrorMessage message={error} />;
@@ -59,9 +66,7 @@ function RepoCard({ repo, isBookmarked, onBookmark }) {
           )}
           <div className="flex flex-wrap items-center gap-2 mt-3 text-xs text-gray-500">
             {repo.language && (
-              <span className="text-gray-700 dark:text-gray-300">
-                {repo.language}
-              </span>
+              <span className="text-gray-700 dark:text-gray-300">{repo.language}</span>
             )}
             <span>⭐ {repo.stars.toLocaleString()}</span>
             {repo.topics.slice(0, 2).map((topic) => (

@@ -2,8 +2,6 @@ export const LANGUAGES = [
   { id: "javascript", label: "JavaScript", color: "#f7df1e" },
   { id: "typescript", label: "TypeScript", color: "#3178c6" },
   { id: "python", label: "Python", color: "#3572A5" },
-  { id: "rust", label: "Rust", color: "#dea584" },
-  { id: "go", label: "Go", color: "#00ADD8" },
   { id: "java", label: "Java", color: "#b07219" },
   { id: "cpp", label: "C++", color: "#f34b7d" },
   { id: "csharp", label: "C#", color: "#178600" },

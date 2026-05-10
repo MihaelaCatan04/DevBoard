@@ -1,38 +1,50 @@
 // Docs: https://docs.github.com/en/rest/search
 
 const BASE_URL = "https://api.github.com/search/repositories";
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const CACHE_PREFIX = "devboard_gh_";
 
-export async function fetchGithubRepos(languages = [], page = 1) {
-  const validLanguages = languages.filter(Boolean);
+let prefetchPromise = null;
 
-  let query;
+function getCacheKey(language) {
+  return CACHE_PREFIX + language;
+}
 
-  if (validLanguages.length > 0) {
-    query = validLanguages.map((lang) => `language:${lang}`).join(" ");
-  } else {
-    const date = new Date();
-    date.setDate(date.getDate() - 30);
-    const since = date.toISOString().split("T")[0];
-
-    query = `stars:>1000 created:>${since}`;
+function readCache(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL_MS) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
   }
+}
 
-  const url = `${BASE_URL}?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=10&page=${page}`;
+function writeCache(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
+  } catch {}
+}
 
-  const response = await fetch(url);
+function getHeaders() {
+  const headers = {};
+  const token = import.meta.env?.VITE_GITHUB_TOKEN;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  return headers;
+}
 
-  if (response.status === 403) {
-    throw new Error("GitHub rate limit reached. Try again in a minute.");
-  }
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    console.log(errorData);
-    throw new Error(`GitHub API error: ${response.status}`);
-  }
-
-  const json = await response.json();
-
+async function fetchOneLanguage(language) {
+  const url = `${BASE_URL}?q=${encodeURIComponent(`language:${language}`)}&sort=stars&order=desc&per_page=10`;
+  const res = await fetch(url, { headers: getHeaders() });
+  if (res.status === 403)
+    throw Object.assign(new Error("rate_limited"), { code: 403 });
+  if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+  const json = await res.json();
   return json.items.map((repo) => ({
     id: repo.id,
     name: repo.full_name,
@@ -42,4 +54,37 @@ export async function fetchGithubRepos(languages = [], page = 1) {
     url: repo.html_url,
     topics: repo.topics ?? [],
   }));
+}
+
+export function prefetchAllLanguages(allLanguages = []) {
+  if (prefetchPromise) return prefetchPromise;
+
+  prefetchPromise = Promise.allSettled(
+    allLanguages.map(async (lang) => {
+      const key = getCacheKey(lang);
+      if (readCache(key)) return;
+      const repos = await fetchOneLanguage(lang);
+      writeCache(key, repos);
+    }),
+  );
+
+  return prefetchPromise;
+}
+
+export async function fetchGithubRepos(selectedLanguages = []) {
+  const valid = selectedLanguages.filter(Boolean);
+  if (valid.length === 0) return [];
+
+  if (prefetchPromise) await prefetchPromise;
+
+  const seen = new Set();
+  return valid
+    .flatMap((lang) => readCache(getCacheKey(lang)) ?? [])
+    .filter((repo) => {
+      if (seen.has(repo.id)) return false;
+      seen.add(repo.id);
+      return true;
+    })
+    .sort((a, b) => b.stars - a.stars)
+    .slice(0, 20);
 }
