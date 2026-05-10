@@ -1,19 +1,23 @@
-import { useProfileContext } from "../../context/ProfileContext";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleBookmark } from "../../store/profileSlice";
 import { useFeed } from "../../hooks/useFeed";
 import { fetchDevToArticles } from "../../services/devto";
 import Spinner from "../ui/Spinner";
 import ErrorMessage from "../ui/ErrorMessage";
 
 export default function DevToPanel() {
-  const { profile, toggleBookmark } = useProfileContext();
+  const topics = useSelector((state) => state.profile.data.topics);
+  const languages = useSelector((state) => state.profile.data.languages);
+  const bookmarks = useSelector((state) => state.profile.data.bookmarks);
+  const dispatch = useDispatch();
 
   const {
     data: articles,
     loading,
     error,
   } = useFeed(
-    () => fetchDevToArticles(profile.topics, profile.languages),
-    [profile.topics.join(","), profile.languages.join(",")],
+    () => fetchDevToArticles(topics, languages),
+    [topics.join(","), languages.join(",")],
   );
 
   if (loading) return <Spinner />;
@@ -31,8 +35,10 @@ export default function DevToPanel() {
         <ArticleCard
           key={article.id}
           article={article}
-          isBookmarked={profile.bookmarks.some((b) => b.id === article.id)}
-          onBookmark={() => toggleBookmark({ ...article, type: "article" })}
+          isBookmarked={bookmarks.some((b) => b.id === article.id)}
+          onBookmark={() =>
+            dispatch(toggleBookmark({ ...article, type: "article" }))
+          }
         />
       ))}
     </div>
@@ -49,7 +55,6 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
           className="w-full h-32 object-cover"
         />
       )}
-
       <div className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
@@ -61,7 +66,6 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
             >
               {article.title}
             </a>
-
             <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500">
               <span>by {article.author}</span>
               <span>{article.readingTime} min read</span>
@@ -70,7 +74,6 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
               </span>
               <span>{article.comments} comments</span>
             </div>
-
             {article.tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {article.tags.slice(0, 4).map((tag) => (
@@ -84,7 +87,6 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
               </div>
             )}
           </div>
-
           <button
             onClick={onBookmark}
             className={`text-lg flex-shrink-0 transition-colors ${

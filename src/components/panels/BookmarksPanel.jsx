@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useProfileContext } from "../../context/ProfileContext";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleBookmark } from "../../store/profileSlice";
 
 const FILTERS = [
   { id: "all", label: "All" },
@@ -8,10 +9,12 @@ const FILTERS = [
 ];
 
 export default function BookmarksPanel() {
-  const { profile, toggleBookmark } = useProfileContext();
+  const bookmarks = useSelector((state) => state.profile.data.bookmarks);
+  const dispatch = useDispatch();
+
   const [activeFilter, setActiveFilter] = useState("all");
 
-  const filtered = profile.bookmarks.filter((item) =>
+  const filtered = bookmarks.filter((item) =>
     activeFilter === "all" ? true : item.type === activeFilter,
   );
 
@@ -31,14 +34,14 @@ export default function BookmarksPanel() {
             {filter.label}
             <span className="ml-1.5 text-xs opacity-70">
               {filter.id === "all"
-                ? profile.bookmarks.length
-                : profile.bookmarks.filter((b) => b.type === filter.id).length}
+                ? bookmarks.length
+                : bookmarks.filter((b) => b.type === filter.id).length}
             </span>
           </button>
         ))}
       </div>
 
-      {profile.bookmarks.length === 0 && (
+      {bookmarks.length === 0 && (
         <div className="text-center py-16">
           <p className="text-4xl mb-3">☆</p>
           <p className="text-gray-500 font-medium">No bookmarks yet</p>
@@ -48,7 +51,7 @@ export default function BookmarksPanel() {
         </div>
       )}
 
-      {profile.bookmarks.length > 0 && filtered.length === 0 && (
+      {bookmarks.length > 0 && filtered.length === 0 && (
         <p className="text-gray-500 text-center py-12">
           No {activeFilter === "repo" ? "repos" : "articles"} bookmarked yet.
         </p>
@@ -59,7 +62,7 @@ export default function BookmarksPanel() {
           <BookmarkCard
             key={item.id}
             item={item}
-            onRemove={() => toggleBookmark(item)}
+            onRemove={() => dispatch(toggleBookmark(item))}
           />
         ))}
       </div>
@@ -93,13 +96,11 @@ function BookmarkCard({ item, onRemove }) {
           >
             {item.name || item.title}
           </a>
-
           {item.description && (
             <p className="text-gray-500 text-sm mt-1 line-clamp-2">
               {item.description}
             </p>
           )}
-
           <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
             {item.type === "repo" && item.stars && (
               <span>⭐ {item.stars.toLocaleString()}</span>
@@ -115,7 +116,6 @@ function BookmarkCard({ item, onRemove }) {
             )}
           </div>
         </div>
-
         <button
           onClick={onRemove}
           title="Remove bookmark"

@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { useProfileContext } from "../../context/ProfileContext";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleLanguage, toggleTopic } from "../../store/profileSlice";
 import { LANGUAGES, TOPICS } from "../../constants/topics";
 
 export default function SettingsDrawer({ isOpen, onClose }) {
-  const { profile, toggleLanguage, toggleTopic } = useProfileContext();
+  const languages = useSelector((state) => state.profile.data.languages);
+  const topics = useSelector((state) => state.profile.data.topics);
+  const dispatch = useDispatch();
 
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
@@ -41,11 +44,11 @@ export default function SettingsDrawer({ isOpen, onClose }) {
             </p>
             <div className="grid grid-cols-2 gap-2">
               {LANGUAGES.map((lang) => {
-                const isSelected = profile.languages.includes(lang.id);
+                const isSelected = languages.includes(lang.id);
                 return (
                   <button
                     key={lang.id}
-                    onClick={() => toggleLanguage(lang.id)}
+                    onClick={() => dispatch(toggleLanguage(lang.id))}
                     className={`
                       flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all
                       ${
@@ -65,7 +68,7 @@ export default function SettingsDrawer({ isOpen, onClose }) {
               })}
             </div>
 
-            {profile.languages.length === 0 && (
+            {languages.length === 0 && (
               <p className="text-orange-500 text-xs mt-2">
                 Select at least one language for best results.
               </p>
@@ -81,11 +84,11 @@ export default function SettingsDrawer({ isOpen, onClose }) {
             </p>
             <div className="grid grid-cols-2 gap-2">
               {TOPICS.map((topic) => {
-                const isSelected = profile.topics.includes(topic.id);
+                const isSelected = topics.includes(topic.id);
                 return (
                   <button
                     key={topic.id}
-                    onClick={() => toggleTopic(topic.id)}
+                    onClick={() => dispatch(toggleTopic(topic.id))}
                     className={`
                       px-3 py-2 rounded-lg border text-sm font-medium transition-all
                       ${
@@ -101,7 +104,7 @@ export default function SettingsDrawer({ isOpen, onClose }) {
               })}
             </div>
 
-            {profile.topics.length === 0 && (
+            {topics.length === 0 && (
               <p className="text-orange-500 text-xs mt-2">
                 Select at least one topic for best results.
               </p>

@@ -1,32 +1,31 @@
 import { useState } from "react";
-import { useProfileContext } from "../../context/ProfileContext";
+import { useSelector, useDispatch } from "react-redux";
+import { addPackage, removePackage } from "../../store/profileSlice";
 import { useFeed } from "../../hooks/useFeed";
 import { fetchPackages } from "../../services/npm";
 import Spinner from "../ui/Spinner";
 import ErrorMessage from "../ui/ErrorMessage";
 
 export default function NpmPanel() {
-  const { profile, addPackage, removePackage } = useProfileContext();
+  const packages = useSelector((state) => state.profile.data.packages);
+  const dispatch = useDispatch();
+
   const [input, setInput] = useState("");
   const [inputError, setInputError] = useState(null);
 
-  const {
-    data: packages,
-    loading,
-    error,
-  } = useFeed(
-    () => fetchPackages(profile.packages),
-    [profile.packages.join(",")],
+  const { data, loading, error } = useFeed(
+    () => fetchPackages(packages),
+    [packages.join(",")],
   );
 
   function handleAdd() {
     const cleaned = input.trim().toLowerCase();
     if (!cleaned) return;
-    if (profile.packages.includes(cleaned)) {
+    if (packages.includes(cleaned)) {
       setInputError("You are already tracking this package");
       return;
     }
-    addPackage(cleaned);
+    dispatch(addPackage(cleaned));
     setInput("");
     setInputError(null);
   }
@@ -68,19 +67,19 @@ export default function NpmPanel() {
       {loading && <Spinner />}
       {error && <ErrorMessage message={error} />}
 
-      {!loading && !error && packages?.length === 0 && (
+      {!loading && !error && data?.length === 0 && (
         <p className="text-gray-500 text-center py-12">
           No packages tracked yet.
         </p>
       )}
 
-      {!loading && !error && packages && (
+      {!loading && !error && data && (
         <div className="grid gap-3">
-          {packages.map((pkg) => (
+          {data.map((pkg) => (
             <PackageCard
               key={pkg.id}
               pkg={pkg}
-              onRemove={() => removePackage(pkg.id)}
+              onRemove={() => dispatch(removePackage(pkg.id))}
             />
           ))}
         </div>
@@ -107,13 +106,11 @@ function PackageCard({ pkg, onRemove }) {
               v{pkg.version}
             </span>
           </div>
-
           {pkg.description && (
             <p className="text-gray-600 dark:text-gray-400 text-sm mt-1 line-clamp-2">
               {pkg.description}
             </p>
           )}
-
           <div className="mt-2 text-xs text-gray-500">
             <span className="text-green-500 dark:text-green-400 font-medium">
               {pkg.weeklyDownloads.toLocaleString()}
@@ -121,7 +118,6 @@ function PackageCard({ pkg, onRemove }) {
             downloads last week
           </div>
         </div>
-
         <button
           onClick={onRemove}
           title="Stop tracking"

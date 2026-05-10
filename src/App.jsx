@@ -1,13 +1,18 @@
-import { useProfileContext } from './context/ProfileContext'
-import Onboarding from './pages/Onboarding'
-import Dashboard from './pages/Dashboard'
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
-  const { hasCompletedOnboarding } = useProfileContext()
+  const hasCompletedOnboarding = useSelector(
+    (state) => state.profile.hasCompletedOnboarding,
+  );
+  const isDark = useSelector((state) => state.theme.isDark);
 
-  if (!hasCompletedOnboarding) {
-    return <Onboarding />
-  }
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDark);
+  }, [isDark]);
 
-  return <Dashboard />
+  if (!hasCompletedOnboarding) return <Onboarding />;
+  return <Dashboard />;
 }

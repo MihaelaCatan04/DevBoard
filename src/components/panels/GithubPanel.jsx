@@ -1,20 +1,20 @@
-import { useProfileContext } from "../../context/ProfileContext";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleBookmark } from "../../store/profileSlice";
 import { useFeed } from "../../hooks/useFeed";
 import { fetchGithubRepos } from "../../services/github";
 import Spinner from "../ui/Spinner";
 import ErrorMessage from "../ui/ErrorMessage";
 
 export default function GithubPanel() {
-  const { profile, toggleBookmark } = useProfileContext();
+  const languages = useSelector((state) => state.profile.data.languages);
+  const bookmarks = useSelector((state) => state.profile.data.bookmarks);
+  const dispatch = useDispatch();
 
   const {
     data: repos,
     loading,
     error,
-  } = useFeed(
-    () => fetchGithubRepos(profile.languages),
-    [profile.languages.join(",")],
-  );
+  } = useFeed(() => fetchGithubRepos(languages), [languages.join(",")]);
 
   if (loading) return <Spinner />;
   if (error) return <ErrorMessage message={error} />;
@@ -31,8 +31,8 @@ export default function GithubPanel() {
         <RepoCard
           key={repo.id}
           repo={repo}
-          isBookmarked={profile.bookmarks.some((b) => b.id === repo.id)}
-          onBookmark={() => toggleBookmark({ ...repo, type: "repo" })}
+          isBookmarked={bookmarks.some((b) => b.id === repo.id)}
+          onBookmark={() => dispatch(toggleBookmark({ ...repo, type: "repo" }))}
         />
       ))}
     </div>
@@ -52,13 +52,11 @@ function RepoCard({ repo, isBookmarked, onBookmark }) {
           >
             {repo.name}
           </a>
-
           {repo.description && (
             <p className="text-gray-600 dark:text-gray-400 text-sm mt-1 line-clamp-2">
               {repo.description}
             </p>
           )}
-
           <div className="flex flex-wrap items-center gap-2 mt-3 text-xs text-gray-500">
             {repo.language && (
               <span className="text-gray-700 dark:text-gray-300">
@@ -76,7 +74,6 @@ function RepoCard({ repo, isBookmarked, onBookmark }) {
             ))}
           </div>
         </div>
-
         <button
           onClick={onBookmark}
           title={isBookmarked ? "Remove bookmark" : "Bookmark this repo"}

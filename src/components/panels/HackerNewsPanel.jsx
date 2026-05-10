@@ -1,17 +1,20 @@
-import { useProfileContext } from "../../context/ProfileContext";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleBookmark } from "../../store/profileSlice";
 import { useFeed } from "../../hooks/useFeed";
 import { fetchHNStories } from "../../services/hackernews";
 import Spinner from "../ui/Spinner";
 import ErrorMessage from "../ui/ErrorMessage";
 
 export default function HackerNewsPanel() {
-  const { profile, toggleBookmark } = useProfileContext();
+  const topics = useSelector((state) => state.profile.data.topics);
+  const bookmarks = useSelector((state) => state.profile.data.bookmarks);
+  const dispatch = useDispatch();
 
   const {
     data: stories,
     loading,
     error,
-  } = useFeed(() => fetchHNStories(profile.topics), [profile.topics.join(",")]);
+  } = useFeed(() => fetchHNStories(topics), [topics.join(",")]);
 
   if (loading) return <Spinner />;
   if (error) return <ErrorMessage message={error} />;
@@ -28,8 +31,10 @@ export default function HackerNewsPanel() {
         <StoryCard
           key={story.id}
           story={story}
-          isBookmarked={profile.bookmarks.some((b) => b.id === story.id)}
-          onBookmark={() => toggleBookmark({ ...story, type: "article" })}
+          isBookmarked={bookmarks.some((b) => b.id === story.id)}
+          onBookmark={() =>
+            dispatch(toggleBookmark({ ...story, type: "article" }))
+          }
         />
       ))}
     </div>
@@ -49,7 +54,6 @@ function StoryCard({ story, isBookmarked, onBookmark }) {
           >
             {story.title}
           </a>
-
           <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500">
             <span className="text-orange-500 dark:text-orange-400">
               ▲ {story.score}
@@ -66,7 +70,6 @@ function StoryCard({ story, isBookmarked, onBookmark }) {
             </a>
           </div>
         </div>
-
         <button
           onClick={onBookmark}
           className={`text-lg flex-shrink-0 transition-colors ${

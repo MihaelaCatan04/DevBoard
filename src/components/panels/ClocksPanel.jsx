@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { useProfileContext } from "../../context/ProfileContext";
+import { useSelector, useDispatch } from "react-redux";
+import { addClock, removeClock } from "../../store/profileSlice";
 import { TIMEZONES } from "../../constants/topics";
 
 export default function ClocksPanel() {
-  const { profile, addClock, removeClock } = useProfileContext();
+  const clocks = useSelector((state) => state.profile.data.clocks);
+  const dispatch = useDispatch();
+
   const [now, setNow] = useState(new Date());
   const [selected, setSelected] = useState("");
 
@@ -14,17 +17,14 @@ export default function ClocksPanel() {
 
   function handleAdd() {
     if (!selected) return;
-    addClock(selected);
+    dispatch(addClock(selected));
     setSelected("");
   }
 
-  const activeClocks = profile.clocks
+  const activeClocks = clocks
     .map((id) => TIMEZONES.find((tz) => tz.id === id))
     .filter(Boolean);
-
-  const availableToAdd = TIMEZONES.filter(
-    (tz) => !profile.clocks.includes(tz.id),
-  );
+  const availableToAdd = TIMEZONES.filter((tz) => !clocks.includes(tz.id));
 
   return (
     <div>
@@ -65,7 +65,7 @@ export default function ClocksPanel() {
             key={tz.id}
             timezone={tz}
             now={now}
-            onRemove={() => removeClock(tz.id)}
+            onRemove={() => dispatch(removeClock(tz.id))}
           />
         ))}
       </div>
@@ -102,10 +102,10 @@ function ClockCard({ timezone, now, onRemove }) {
   }
 
   function getTimeLabel() {
-    if (isNight) return "🌙 Night";
-    if (isDawn) return "🌅 Morning";
-    if (isEvening) return "🌆 Evening";
-    return "☀️ Day";
+    if (isNight) return "Night";
+    if (isDawn) return "Morning";
+    if (isEvening) return "Evening";
+    return "Day";
   }
 
   return (
@@ -124,11 +124,9 @@ function ClockCard({ timezone, now, onRemove }) {
           ✕
         </button>
       </div>
-
       <p className={`text-3xl font-mono font-bold ${getTimeColor()}`}>
         {timeString}
       </p>
-
       <div className="flex items-center justify-between mt-2">
         <p className="text-xs text-gray-500">{dateString}</p>
         <span className="text-xs text-gray-500">{getTimeLabel()}</span>
